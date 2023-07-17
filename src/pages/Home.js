@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { ReactComponent as SVG_arrow } from "../img/arrow.svg";
 import { ReactComponent as SVG_stop } from "../img/stop.svg";
-
+import { useState } from "react"
 
 function Home() {
   let deviceName = 'HMSoft';
@@ -9,7 +9,7 @@ function Home() {
   let characteristicUUID = 0xFFE1;
 
   let device;
-  let characteristic;
+  const [characteristic, setCharacteristic] = useState()
   let server;
   let service;
 
@@ -19,13 +19,15 @@ function Home() {
     })
     server = await device.gatt.connect();
     service = await server.getPrimaryService(serviceUUID);
-    characteristic = await service.getCharacteristic(characteristicUUID);
+    const characteristic = await service.getCharacteristic(characteristicUUID);
+    setCharacteristic(characteristic)
     console.log(server, service, characteristic)
   }
 
   async function sendData(prop) {
     let data = prop;
-    await characteristic.writeValue(new TextEncoder().encode(data)).then(() => {
+
+    await characteristic.writeValue(new TextEncoder().encode(Number(data))).then(() => {
       console.log('Data sent: ' + data);
     });
   }
